@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 
 const ragModel = new mongoose.Schema({
-    userId:{ type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
+   userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
-    },
+      },
     queries: [{
         queryText: {
             type: String,

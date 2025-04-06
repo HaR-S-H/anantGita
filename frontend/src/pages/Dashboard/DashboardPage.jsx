@@ -55,7 +55,7 @@ const DashboardPage = () => {
         setVerseParts({ before, after });
       }
     } catch (error) {
-      console.error("Error fetching last verse:", error);
+      // console.error("Error fetching last verse:", error);
     } finally {
       setLoading(false);
     }

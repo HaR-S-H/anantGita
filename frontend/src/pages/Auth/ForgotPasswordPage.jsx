@@ -55,7 +55,7 @@ const ForgotPasswordPage = () => {
       setSubmitSuccess(true);
       
     } catch (err) {
-      console.error('Password reset error:', err);
+      // console.error('Password reset error:', err);
       setError('Failed to send password reset email. Please try again.');
     } finally {
       setIsSubmitting(false);

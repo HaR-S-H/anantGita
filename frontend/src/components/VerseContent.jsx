@@ -28,9 +28,9 @@ const VerseContent = ({
   currVerse
 }) => {
   // Add state for tracking read status
-  const { chapters, verses, setChapters, setVerses, setLastStudiedVerse, setLoading, setTimeSpent } = useProgress();
+  const { chapters, verses, setChapters, setVerses, setLastStudiedVerse,setLastAccessedAt,setComprehensionScore, setLoading, setTimeSpent } = useProgress();
   const { notes, setNotes } = useNote();
-  const [verseRead, setVerseRead] = React.useState(false);
+  const [verseRead, setVerseRead] = React.useState(verses.includes(verse._id));
   const [chapterRead, setChapterRead] = React.useState(chapters.includes(chapterId));
   // State for notes
   const [noteText, setNoteText] = React.useState("");
@@ -40,14 +40,24 @@ const VerseContent = ({
   // Check if this is the last verse in the chapter
   const isLastVerse = currVerse == totalVerses;
 
-  const handleMarkVerseRead = async() => {
+  const handleMarkVerseRead = async () => {  
     setVerseRead(!verseRead);
+    
     // Here you would add logic to store this in your actual state management
     try {
       await updateProgress(verse._id);
-      await getProgress(setChapters, setVerses, setLastStudiedVerse, setLoading, setTimeSpent);
+
+      
+      // Try calling getProgress without await to see if it's a timing issue
+      getProgress(setChapters, 
+        setComprehensionScore, 
+        setVerses, 
+        setLastAccessedAt,
+        setLastStudiedVerse, 
+        setLoading, 
+        setTimeSpent)
     } catch (error) {
-      console.log(error);
+      console.error("Error in click handler:", error);
     }
   };
 
@@ -57,7 +67,7 @@ const VerseContent = ({
       setNoteText(note?.note);
     } catch (error) {
       setNoteText('');
-      console.log(error);
+      // console.log(error);
     }
   }
 
@@ -72,7 +82,7 @@ const VerseContent = ({
       await updateProgressWithChapter(chapterId);
       await getProgress(setChapters, setVerses, setLastStudiedVerse, setLoading, setTimeSpent);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -85,7 +95,7 @@ const VerseContent = ({
         setNoteDialogOpen(false);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 
@@ -204,11 +214,11 @@ const VerseContent = ({
                   <Button
                     onClick={handleMarkVerseRead}
                     size="sm"
-                    variant={verses.includes(verse._id) ? "default" : "outline"}
+                    variant={verseRead ? "default" : "outline"}
                     className="h-8 w-8 p-0"
                     style={{
-                      backgroundColor: verses.includes(verse._id) ? colors.deeperRed : colors.lightBeige,
-                      color: verses.includes(verse._id) ? colors.lightBeige : colors.deeperRed,
+                      backgroundColor: verseRead ? colors.deeperRed : colors.lightBeige,
+                      color: verseRead ? colors.lightBeige : colors.deeperRed,
                       borderColor: colors.deeperRed
                     }}
                   >
@@ -216,7 +226,7 @@ const VerseContent = ({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{verses.includes(verse._id) ? "Mark Verse as Unread" : "Mark Verse as Read"}</p>
+                  <p>{verseRead ? "Mark Verse as Unread" : "Mark Verse as Read"}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

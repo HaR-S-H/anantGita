@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import {toast} from "sonner"
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Eye, EyeOff, Mail } from 'lucide-react';
 import authImage from "@/assets/images/authImage.jpg";
@@ -85,7 +86,7 @@ const SignupForm = () => {
         const result = await loginWithGoogle(authResult.code, auth, navigate);
       }
     } catch (e) {
-      console.log('Error while Google Login...', e);
+      // console.log('Error while Google Login...', e);
     }
   };
   
@@ -112,23 +113,10 @@ const SignupForm = () => {
     
     try {
       const response = await registerUser(formData, auth, navigate);
-      // console.log("harsh",response);
-      
-      // console.log('Form submitted successfully:', formData);
       setSubmitSuccess(true);
-      
-      // Reset form after successful submission
-      // Uncomment if you want to reset the form
-      // setFormData({
-      //   fullName: '',
-      //   email: '',
-      //   gender: 'male',
-      //   password: ''
-      // });
-      
     } catch (error) {
-      console.error('Signup error:', error);
-      setErrors({ form: 'Failed to create account. Please try again.' });
+      // toast.error(error.response?.data?.message || "Signup failed. Please try again.");
+      setErrors({ form: error.response?.data?.message });
     } finally {
       setIsSubmitting(false);
     }
@@ -141,8 +129,8 @@ const SignupForm = () => {
         <div className="w-full md:w-1/2 overflow-y-auto" style={{ backgroundColor: colors.paleBeige }}>
           <div className="p-6">
             <div className="mb-4">
-              <h1 className="text-2xl font-bold" style={{ color: colors.darkRed }}>Create Your Account</h1>
-              <p style={{ color: '#7D5E35' }} className="mt-1 text-sm">Join our community today</p>
+              <h1 className="text-4xl font-bold italianno-regular" style={{ color: colors.darkRed }}>Create Your Account</h1>
+              <p style={{ color: '#7D5E35' }} className="mt-1 text-sm">Embark on your path to self-realization.</p>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -312,8 +300,8 @@ const SignupForm = () => {
               {/* Overlay with content */}
               <div className="absolute inset-0 bg-gradient-to-t" style={{ background: `linear-gradient(to top, ${colors.deeperRed} 0%, transparent 70%)` }}></div>
               <div className="absolute bottom-0 left-0 p-8 text-white">
-                <h2 className="text-2xl font-bold mb-2">Welcome to our Community</h2>
-                <p className="text-sm max-w-xs" style={{ color: colors.paleBeige }}>Join thousands of members and get access to exclusive content, resources, and support.</p>
+                <h1 className="text-5xl font-bold mb-2 italianno-regular">Welcome to our Community</h1>
+                <p className="text-sm max-w-xs" style={{ color: colors.paleBeige }}>Join a growing community of learners exploring the timeless teachings of the Bhagavad Gita.</p>
               </div>
             </div>
           </div>

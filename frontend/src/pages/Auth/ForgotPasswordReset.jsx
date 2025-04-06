@@ -77,7 +77,7 @@ const auth = useAuth();
     try {
       await forgetPasswordResetPassword(email,formData.confirmPassword,auth, navigate);
     } catch (error) {
-      console.error('Reset password error:', error);
+      // console.error('Reset password error:', error);
       if (error.response && error.response.data) {
         setErrors({ form: error.response.data.message || 'Failed to reset password' });
       } else {

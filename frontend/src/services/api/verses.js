@@ -10,13 +10,13 @@ import api from "./index";
 // };
 export const getVerse = async (verseId) => {
   try {
-  console.log("harsh");
+
   
    const response = await api.get(`/verses/${verseId}`);
-   console.log(response.data);
+  //  console.log(response.data);
   return response.data.data.verse;
  } catch (error) {
-  console.log(error);
+  // console.log(error);
   
  }
 };

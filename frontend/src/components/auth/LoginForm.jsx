@@ -89,7 +89,7 @@ const LoginForm = () => {
       const loginData = { email, password };
       const response = await loginUser(loginData,auth,navigate);
     } catch (error) {
-      console.error('Login error:', error);
+      // console.error('Login error:', error);
       setErrors({ form: 'Invalid email or password. Please try again.' });
     } finally {
       setIsSubmitting(false);
@@ -101,7 +101,7 @@ const LoginForm = () => {
         const result = await loginWithGoogle(authResult.code,auth,navigate);
       }
     } catch (e) {
-      console.log('Error while Google Login...', e);
+      // console.log('Error while Google Login...', e);
     }
   };
   const handleGoogleLogin = 
@@ -120,8 +120,8 @@ const LoginForm = () => {
         <div className="w-full md:w-1/2 overflow-y-auto" style={{ backgroundColor: colors.paleBeige }}>
           <div className="p-6">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold" style={{ color: colors.darkRed }}>Welcome Back</h1>
-              <p style={{ color: '#7D5E35' }} className="mt-1 text-sm">Sign in to your account</p>
+              <h1 className="text-5xl font-bold italianno-regular" style={{ color: colors.darkRed }}>Welcome Back</h1>
+              <p style={{ color: '#7D5E35' }} className="mt-1 text-sm">Learn. Reflect. Evolve. Together.</p>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -271,8 +271,8 @@ const LoginForm = () => {
               {/* Overlay with content */}
               <div className="absolute inset-0 bg-gradient-to-t" style={{ background: `linear-gradient(to top, ${colors.deeperRed} 0%, transparent 70%)` }}></div>
               <div className="absolute bottom-0 left-0 p-8 text-white">
-                <h2 className="text-2xl font-bold mb-2">Welcome Back</h2>
-                <p className="text-sm max-w-xs" style={{ color: colors.paleBeige }}>Sign in to access your account and continue your journey with our community.</p>
+                <h2 className="text-3xl font-bold mb-2 italianno-regular">Unfold the teachings of the Gita, one step at a time.</h2>
+                <p className="text-sm max-w-xs" style={{ color: colors.paleBeige }}>Join a growing community of learners exploring the timeless teachings of the Bhagavad Gita.</p>
               </div>
             </div>
           </div>

@@ -9,7 +9,7 @@ export const ProgressProvider = ({ children }) => {
   const [lastStudiedVerse, setLastStudiedVerse] = useState(null);
     const [timeSpent, setTimeSpent] = useState(0);
     const [allVerses,setAllVerses]=useState([]);
-    const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
     const [comprehensionScore, setComprehensionScore] = useState(0);
  const fetchProgress = async () => {
     try {
@@ -33,7 +33,7 @@ export const ProgressProvider = ({ children }) => {
 
 
   return (
-    <ProgressContext.Provider value={{setAllVerses,allVerses,chapters,setChapters,loading,setLoading,verses,comprehensionScore,setComprehensionScore,setVerses,lastStudiedVerse,lastAccessedAt, setLastAccessedAt,setLastStudiedVerse,setTimeSpent}}>
+    <ProgressContext.Provider value={{setAllVerses,allVerses,chapters,setChapters,loading,setLoading,verses,comprehensionScore,setComprehensionScore,setVerses,lastStudiedVerse,lastAccessedAt, setLastAccessedAt,setLastStudiedVerse,timeSpent,setTimeSpent}}>
       {children}
       <Toaster />
 

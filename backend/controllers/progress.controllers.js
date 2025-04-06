@@ -19,6 +19,7 @@ const updateProgress = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const { chapterId, verseId, timeSpent } = req.body;
     
+    
     if (!userId) {
         throw new ApiError(400, "userId not found");
     }

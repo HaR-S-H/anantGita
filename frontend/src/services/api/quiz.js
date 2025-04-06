@@ -4,7 +4,7 @@ export const getQuizez = async (chapterIds) => {
   const response = await api.post("/quiz",{chapterIds});
    return response.data.data;
  } catch (error) {
-    console.log(error);
+   //  console.log(error);
  }
 };
 export const submitQuiz = async (answers, quizId) => {
@@ -12,7 +12,7 @@ export const submitQuiz = async (answers, quizId) => {
         const response = await api.post("/quiz/submit",{answers,quizId});
          return response.data.data;
        } catch (error) {
-          console.log(error);
+         //  console.log(error);
        }
 };
 export const getQuizHistory= async () => {
@@ -20,6 +20,6 @@ export const getQuizHistory= async () => {
         const response = await api.get("/quizHistory");
          return response.data.data;
        } catch (error) {
-          console.log(error);
+         //  console.log(error);
        }
 };

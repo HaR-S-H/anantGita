@@ -4,12 +4,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { ShieldCheckIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
 import { toast } from "sonner";
-import { verifyUser } from '@/services/api/auth';
+import { verifyUser, resendOtp } from '@/services/api/auth';
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 import colors from '@/constants/colors';
-import { resendOtp } from '@/services/api/auth';
+
 const OTPVerification = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef([]);
@@ -20,6 +19,7 @@ const OTPVerification = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const { email } = useParams();
+
   // Handle OTP input change
   const handleChange = (index, value) => {
     // Allow only numbers
@@ -38,8 +38,15 @@ const OTPVerification = () => {
   // Handle key press for OTP inputs
   const handleKeyDown = (index, e) => {
     // Move to previous input on backspace if current input is empty
-    if (e.key === 'Backspace' && otp[index] === '' && index > 0) {
-      inputRefs.current[index - 1].focus();
+    if (e.key === 'Backspace') {
+      if (otp[index] === '' && index > 0) {
+        inputRefs.current[index - 1].focus();
+      } else {
+        // Clear current field on backspace even if it has a value
+        const newOtp = [...otp];
+        newOtp[index] = '';
+        setOtp(newOtp);
+      }
     }
   };
 
@@ -50,18 +57,31 @@ const OTPVerification = () => {
     const pastedDigits = pastedData.replace(/\D/g, '').split('').slice(0, 6);
     
     if (pastedDigits.length) {
-      const newOtp = [...otp];
+      // Create a new OTP array with empty strings for unfilled positions
+      const newOtp = Array(6).fill('');
+      
       pastedDigits.forEach((digit, i) => {
         if (i < 6) newOtp[i] = digit;
       });
+      
       setOtp(newOtp);
       
       // Move focus to the input after the last pasted digit
       if (pastedDigits.length < 6) {
         inputRefs.current[pastedDigits.length].focus();
+      } else {
+        // If all 6 digits were pasted, move focus to the last input
+        inputRefs.current[5].focus();
       }
     }
   };
+
+  // Auto-submit when all fields are filled
+  useEffect(() => {
+    if (otp.every(digit => digit !== '') && !isVerifying && !isVerified) {
+      verifyOtp();
+    }
+  }, [otp]);
 
   // Verify OTP using the API
   const verifyOtp = async () => {
@@ -75,45 +95,53 @@ const OTPVerification = () => {
           otp: otpString
         };
         
-        const response = await verifyUser(otpData,auth,navigate);
+        const response = await verifyUser(otpData, auth, navigate);
         
-        // Handle successful verification
-        setIsVerified(true);
-        // toast.success("Verification successful!");
-        
-        // Update authentication state
-        // setIsAuthenticated(true);
-        // if (response.user) {
-        //   setUser(response.user);
-        // }
-        
-        // Redirect to dashboard or home page after a brief delay
-        // setTimeout(() => {
-        //   navigate("/dashboard");
-        // }, 1500);
+        // FIXED: Proper success handling
+        if (response && response.success) {
+          setIsVerified(true);
+          // toast.success("Verification successful!");
+        } else {
+          // If response exists but success is false
+          toast.error("OTP verification failed. Please try again.");
+          resetOtpFields();
+        }
       } catch (error) {
-        // Error is already handled in the verifyUser function (toast)
-        // Reset OTP fields on failure
-        setOtp(['', '', '', '', '', '']);
-        inputRefs.current[0].focus();
+        // Error is already handled in the verifyUser function
+        resetOtpFields();
       } finally {
         setIsVerifying(false);
       }
     }
   };
 
+  // Reset OTP fields helper function
+  const resetOtpFields = () => {
+    setOtp(['', '', '', '', '', '']);
+    setTimeout(() => {
+      // Focus on first input after a brief delay to ensure UI has updated
+      if (inputRefs.current[0]) {
+        inputRefs.current[0].focus();
+      }
+    }, 10);
+  };
+
   // Resend OTP
-  const ResendOtp = async () => {
+  const handleResendOtp = async () => {
     try {
       // Reset timer and disable resend button
       setTimer(30);
       setResendDisabled(true);
-      toast.success("New verification code sent!");
-      // You can add API call to resend OTP here
-      const response = await resendOtp(email,auth,navigate);
-      // Reset OTP fields
-      setOtp(['', '', '', '', '', '']);
-      inputRefs.current[0].focus();
+      
+      // FIXED: No need to pass auth and navigate to resendOtp
+      const response = await resendOtp(email);
+      
+      if (response && response.success) {
+        toast.success("New verification code sent!");
+        resetOtpFields();
+      } else {
+        toast.error("Failed to resend verification code.");
+      }
     } catch (error) {
       toast.error("Failed to resend verification code.");
     }
@@ -134,6 +162,18 @@ const OTPVerification = () => {
     return () => clearInterval(interval);
   }, [resendDisabled, timer]);
 
+  // Set focus to first input on component mount
+  useEffect(() => {
+    if (inputRefs.current[0]) {
+      inputRefs.current[0].focus();
+    }
+    
+    // Cleanup function for any pending operations
+    return () => {
+      // Any cleanup code if needed
+    };
+  }, []);
+
   return (
     <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: colors.offWhite }}>
       <Card className="w-full max-w-md shadow-lg" style={{ backgroundColor: 'white', borderColor: colors.lightBeige }}>
@@ -143,7 +183,7 @@ const OTPVerification = () => {
               <ShieldCheckIcon size={32} color="white" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-center" style={{ color: colors.deeperRed }}>
+          <CardTitle className="text-2xl font-bold text-center montserrat" style={{ color: colors.deeperRed }}>
             Verify Your Account
           </CardTitle>
           <CardDescription className="text-center">
@@ -168,6 +208,7 @@ const OTPVerification = () => {
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onPaste={index === 0 ? handlePaste : undefined}
+                  disabled={isVerifying || isVerified}
                 />
               ))}
             </div>
@@ -177,8 +218,8 @@ const OTPVerification = () => {
             <button
               className="font-medium"
               style={{ color: resendDisabled ? 'gray' : colors.primaryRed }}
-              disabled={resendDisabled}
-              onClick={ResendOtp}
+              disabled={resendDisabled || isVerified}
+              onClick={handleResendOtp}
             >
               {resendDisabled ? `Resend in ${timer}s` : 'Resend Code'}
             </button>

@@ -6,6 +6,7 @@ import crypto from "crypto";
 import axios from "axios";
 import sendOTP from "../utils/nodeMailer.js";
 import oauth2Client from "../utils/googleClient.js";
+import gravatar from "gravatar"
 const registeUser = asyncHandler(async(req, res) =>{
     const { name, email, password,gender } = req.body;
     if (!name || !email || !password || !gender) {
@@ -22,19 +23,24 @@ const registeUser = asyncHandler(async(req, res) =>{
     // let avatarLocalPath = req.files?.avatar[0]?.path;
     // console.log(avatarLocalPath);
     
-    let avatarUrl;
+    // let avatarUrl;
     // if (avatarLocalPath) { 
         
     //     avatarUrl = await uploadOnCloudinary(avatarLocalPath);
     //     avatarUrl = avatarUrl.url;
     // }
     // else {
-        avatarUrl = gender == "male" ? 'https://res.cloudinary.com/dvlkfh2dl/image/upload/v1734186628/male_eo8sx9.jpg' : 'https://res.cloudinary.com/dvlkfh2dl/image/upload/v1734186791/female_vcgpxa.png';
+        // avatarUrl = gender == "male" ? 'https://res.cloudinary.com/dvlkfh2dl/image/upload/v1734186628/male_eo8sx9.jpg' : 'https://res.cloudinary.com/dvlkfh2dl/image/upload/v1734186791/female_vcgpxa.png';
     // }
     // console.log(avatarLocalPath);
     // if (!avatarUrl) { 
     //     throw new ApiError(500, "Error uploading avatar to cloudinary");
     // }
+    const avatarUrl = gravatar.url(email.trim().toLowerCase(), {
+        s: '200',  // Size
+        d: 'mp',   // Default image
+        r: 'pg'    // Rating
+    }, true);
     const newUser = new User({
         name:name.toLowerCase(),
         email,
@@ -121,7 +127,9 @@ const googleAuth = asyncHandler(async (req, res) => {
         const userRes = await axios.get(
             `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
         );
-        const { email, name, picture } = userRes.data;
+    const { email, name, picture } = userRes.data;
+    console.log(picture);
+    
         let user = await User.findOne({ email });
 
         if (!user) {

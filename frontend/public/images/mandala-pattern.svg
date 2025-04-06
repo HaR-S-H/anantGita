@@ -1,0 +1,39 @@
+<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(300, 300)">
+    <!-- Outer Circle -->
+    <circle cx="0" cy="0" r="290" fill="none" stroke="#D84040" stroke-width="2" stroke-opacity="0.5" />
+    
+    <!-- Middle Circle -->
+    <circle cx="0" cy="0" r="220" fill="none" stroke="#D84040" stroke-width="2" stroke-opacity="0.5" />
+    
+    <!-- Inner Circle -->
+    <circle cx="0" cy="0" r="150" fill="none" stroke="#D84040" stroke-width="2" stroke-opacity="0.5" />
+    
+    <!-- Radial Lines -->
+    <g>
+      <line x1="0" y1="0" x2="0" y2="-290" stroke="#D84040" stroke-width="1" stroke-opacity="0.5" />
+      <line x1="0" y1="0" x2="0" y2="290" stroke="#D84040" stroke-width="1" stroke-opacity="0.5" />
+      <line x1="0" y1="0" x2="290" y2="0" stroke="#D84040"  stroke-width="1" stroke-opacity="0.5" />
+      <line x1="0" y1="0" x2="290" y2="0" stroke="#D84040" stroke-width="1" stroke-opacity="0.5" />
+      <line x1="0" y1="0" x2="205" y2="205" stroke="#D84040" stroke-width="1" stroke-opacity="0.5" />
+      <line x1="0" y1="0" x2="-205" y2="205" stroke="#D84040" stroke-width="1" stroke-opacity="0.5" />
+      <line x1="0" y1="0" x2="-290" y2="0" stroke="#D84040" stroke-width="1" stroke-opacity="0.5" />
+      <line x1="0" y1="0" x2="-205" y2="-205" stroke="#D84040" stroke-width="1" stroke-opacity="0.5" />
+      <line x1="0" y1="0" x2="205" y2="-205" stroke="#D84040" stroke-width="1" stroke-opacity="0.5" />
+    </g>
+    
+    <!-- Decorative Elements -->
+    <g>
+      <!-- Lotus Petals -->
+      <path d="M0,-150 C30,-120 30,-80 0,-50 C-30,-80 -30,-120 0,-150" fill="none" stroke="#D84040" stroke-width="1.5" stroke-opacity="0.6" />
+      <path d="M0,-150 C30,-120 30,-80 0,-50 C-30,-80 -30,-120 0,-150" fill="none" stroke="#D84040" stroke-width="1.5" stroke-opacity="0.6" transform="rotate(45)" />
+      <path d="M0,-150 C30,-120 30,-80 0,-50 C-30,-80 -30,-120 0,-150" fill="none" stroke="#D84040" stroke-width="1.5" stroke-opacity="0.6" transform="rotate(90)" />
+      <path d="M0,-150 C30,-120 30,-80 0,-50 C-30,-80 -30,-120 0,-150" fill="none" stroke="#D84040" stroke-width="1.5" stroke-opacity="0.6" transform="rotate(135)" />
+      <path d="M0,-150 C30,-120 30,-80 0,-50 C-30,-80 -30,-120 0,-150" fill="none" stroke="#D84040" stroke-width="1.5" stroke-opacity="0.6" transform="rotate(180)" />
+      <path d="M0,-150 C30,-120 30,-80 0,-50 C-30,-80 -30,-120 0,-150" fill="none" stroke="#D84040" stroke-width="1.5" stroke-opacity="0.6" transform="rotate(225)" />
+      <path d="M0,-150 C30,-120 30,-80 0,-50 C-30,-80 -30,-120 0,-150" fill="none" stroke="#D84040" stroke-width="1.5" stroke-opacity="0.6" transform="rotate(270)" />
+      <path d="M0,-150 C30,-120 30,-80 0,-50 C-30,-80 -30,-120 0,-150" fill="none" stroke="#D84040" stroke-width="1.5" stroke-opacity="0.6" transform="rotate(315)" />
+    </g>
+  </g>
+</svg>
+

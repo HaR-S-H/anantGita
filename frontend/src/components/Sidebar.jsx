@@ -1,15 +1,20 @@
 "use client"
-
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useRef, useEffect } from "react"
-import { Home, Settings, User, Calendar, Menu, X, HelpCircle, GraduationCap, BookOpen, LogOut } from "lucide-react"
+import { Home, Settings, User, Calendar, Menu, X, HelpCircle,LayoutDashboard , GraduationCap, BookOpen, LogOut ,MessageCircle} from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { logoutUser } from "@/services/api/auth"
-import { useNavigate } from "react-router-dom"
+import { useNavigate,useParams } from "react-router-dom"
 import colors from "@/constants/colors"
-
+import image from "@/assets/images/krishna-nav.jpg"
 const Sidebar = ({ children }) => {
+  const getCurrentPage = () => {
+    const path = window.location.pathname; // Get the URL path
+    const segments = path.split("/"); // Split by "/"
+    return segments[1]; // Get the word after 5173/
+};
   const [expanded, setExpanded] = useState(true)
-  const [activeItem, setActiveItem] = useState("dashboard")
+  const [activeItem, setActiveItem] = useState(getCurrentPage())
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
   const auth = useAuth()
   const navigate = useNavigate()
@@ -43,17 +48,15 @@ const Sidebar = ({ children }) => {
   }
 
   const menuItems = [
-    { id: "dashboard", icon: <Home size={20} />, label: "Dashboard" },
-    { id: "Study", icon: <BookOpen size={20} />, label: "Study" },
-    { id: "profile", icon: <User size={20} />, label: "Profile" },
-    { id: "calendar", icon: <Calendar size={20} />, label: "Calendar" },
+    { id: "home", icon: <Home size={20} />, label: "Home" },
+    { id: "chat", icon: <MessageCircle size={20} />, label: "Chat" },
+    { id: "dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
+    { id: "study", icon: <BookOpen size={20} />, label: "Study" },
     { id: "quizzes", icon: <GraduationCap size={20} />, label: "Quizzes" },
-    { id: "settings", icon: <Settings size={20} />, label: "Settings" },
-    { id: "help", icon: <HelpCircle size={20} />, label: "Help" },
   ]
 
   const handleItem = (path) => {
-    if (path == "Study") navigate(`/study/chapter/1/verse/1`)
+    if (path == "study") navigate(`/study/chapter/1/verse/1`)
     else {
       navigate(`/${path}`)
     }
@@ -93,9 +96,12 @@ const Sidebar = ({ children }) => {
                 className="w-8 h-8 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: colors.primaryRed }}
               >
-                <span className="text-white font-bold">S</span>
+                <Avatar>
+        <AvatarImage src={image} alt="image" />
+        <AvatarFallback>A</AvatarFallback>
+      </Avatar>
               </div>
-              <h2 className="font-bold" style={{ color: colors.deeperRed }}>
+              <h2 className="font-bold montserrat" style={{ color: colors.deeperRed }}>
                 AnantGita
               </h2>
             </div>

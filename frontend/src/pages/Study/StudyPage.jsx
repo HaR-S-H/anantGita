@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { useParams, useNavigate } from 'react-router-dom';
 import colors from '@/constants/colors';
 import { useStudy } from '@/context/StudyContext';
@@ -7,47 +7,90 @@ import SidebarStudy from '@/components/SidebarStudy';
 import WordMeanings from '@/components/WordMeanings';
 import VerseContent from '@/components/VerseContent';
 import VerseNavigation from '@/components/VerseNavigation';
-import Header from '@/components/Header';
 import ChapterSelector from '@/components/ChapterSelector';
 import AudioPlayer from '@/components/AudioPlayer';
 import VideoPlayer from '@/components/VideoPlayer';
 import { getChapter } from '@/services/api/chapters';
+import { useAuth } from '@/context/AuthContext';
+import axios from 'axios';
 
 const StudyPage = () => {
   const { chapterNumber = 1, verseNumber = 1 } = useParams();
   const navigate = useNavigate();
-  const { chapter, chapters, loading, setLoading, setChapter,totalVerses,setTotalVerses } = useStudy();
+  const auth = useAuth();
+  const { chapter, loading, setLoading, setChapter, totalVerses, setTotalVerses } = useStudy();
   const [showSidebar, setShowSidebar] = useState(false);
-  const [displayLanguage, setDisplayLanguage] = useState('english'); // sanskrit, english, hindi
-  // const [totalVerses, setTotalVerses] = useState(0);
-  // const [currVerse,setCurrVerse]=useState(-1);
-  // console.log(chapter);
+  const [displayLanguage, setDisplayLanguage] = useState('english');
+  const [startTime, setStartTime] = useState(null);
+  const [localLoading, setLocalLoading] = useState(true);  // Add local loading state
+
+  useEffect(() => {
+    // Start time when the component mounts
+    const start = Date.now();
+    setStartTime(start);
+
+    const sendTimeSpent = () => {
+      if (start) {
+        const endTime = Date.now();
+        const timeSpent = Math.floor((endTime - start) / 1000 / 60); // Convert to minutes
+        if (!(timeSpent >= 1)) { 
+          return;
+        }
+        axios.post(`${import.meta.env.VITE_BACKEND_API}/progress`, {
+          timeSpent: timeSpent,
+        }, {withCredentials: true})
+          .then(response => console.log("Time sent:", response.data))
+          .catch(error => console.error("Error sending time:", error));
+      }
+    };
+
+    // Send data when the user leaves the page
+    window.addEventListener("beforeunload", sendTimeSpent);
+
+    return () => {
+      sendTimeSpent(); // Ensure it runs before unmount
+      window.removeEventListener("beforeunload", sendTimeSpent);
+    };
+  }, []);
   
-  const verse = chapter.verses[verseNumber - 1];
+  const verse = chapter?.verses?.[verseNumber - 1];
   
   const navigateToVerse = async (chapterNum, verseNum) => {
-    // setCurrVerse(verseNum);
-    const response = await getChapter(chapterNum, setChapter, setLoading,setTotalVerses);
-    // setTotalVerses(response.data.chapter.totalVerses);
-    navigate(`/study/chapter/${chapterNum}/verse/${verseNum}`);
+    setLocalLoading(true);  // Set loading to true when navigation starts
+    try {
+      await getChapter(chapterNum, setChapter, setLoading, setTotalVerses);
+      navigate(`/study/chapter/${chapterNum}/verse/${verseNum}`);
+    } finally {
+      setLocalLoading(false);  // Set loading to false when navigation completes
+    }
   };
+
   const fetchChapter = async() => {
     try {
-      await getChapter(chapterNumber, setChapter, setLoading,setTotalVerses);
+      setLocalLoading(true);  // Set loading to true when fetching starts
+      await getChapter(chapterNumber, setChapter, setLoading, setTotalVerses);
     } catch (error) {
-      console.log(error);
-      
+      console.error("Error fetching chapter:", error);
+    } finally {
+      setLocalLoading(false);  // Set loading to false when fetching completes
     }
   }
+
   useEffect(() => {
     fetchChapter();
-  }, []);
+  }, [chapterNumber]);  // Add chapterNumber as dependency
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
 
-  if (loading) {
+  // Show loading indicator if either global or local loading is true
+  if (loading || localLoading) {
+    return <LoadingIndicator />;
+  }
+
+  // Extra safety check before rendering
+  if (!chapter || !verse) {
     return <LoadingIndicator />;
   }
 
@@ -59,18 +102,18 @@ const StudyPage = () => {
             
             {/* Chapter Selector (Full width on small, 1/3 width on large) */}
             <div className="md:col-span-1">
-              <ChapterSelector 
-                currentChapter={parseInt(chapterNumber)} 
-                onSelectChapter={(chapterNum) => navigateToVerse(chapterNum, 1)} 
+              <ChapterSelector
+                currentChapter={parseInt(chapterNumber)}
+                onSelectChapter={(chapterNum) => navigateToVerse(chapterNum, 1)}
               />
             </div>
 
             {/* Verse Content (Takes more space on medium and large screens) */}
             <div className="md:col-span-1 lg:col-span-2 sm:space-y-6">
-            <VerseContent 
-                verse={verse} 
-                chapterName={chapter?.name?.english} 
-                chapterId={chapter?._id}
+              <VerseContent
+                verse={verse}
+                chapterName={chapter?.name?.english}
+                chapterId={chapter?._id}  // Using optional chaining here
                 chapterNumber={parseInt(chapterNumber)}
                 displayLanguage={displayLanguage}
                 setDisplayLanguage={setDisplayLanguage}
@@ -79,31 +122,31 @@ const StudyPage = () => {
                 currVerse={verseNumber}
               />
 
-              <VerseNavigation 
-                totalVerses={chapter?.totalVerses || 0} 
-                currentVerse={parseInt(verseNumber)} 
-                chapterNumber={parseInt(chapterNumber)} 
-                onNavigate={navigateToVerse} 
+              <VerseNavigation
+                totalVerses={chapter?.totalVerses || 0}
+                currentVerse={parseInt(verseNumber)}
+                chapterNumber={parseInt(chapterNumber)}
+                onNavigate={navigateToVerse}
               />
 
               {/* Media Players Section */}
               <div className="flex flex-col sm:flex-row sm:gap-4 sm:border-none border-b sm:border">
-  {verse?.audioUrl && (
-    <div className="w-full">
-      <AudioPlayer audioUrl={verse.audioUrl} />
-    </div>
-  )}
-  {verse?.videoUrl && (
-    <div className="flex justify-center items-center sm:w-1/3 lg:w-1/4 border sm:border-none sm:bg-transparent bg-[#FFFBF2] pb-5 pt-5 sm:p-0">
-      <VideoPlayer videoUrl={verse.videoUrl} />
-    </div>
-  )}
-</div>
+                {verse?.audioUrl && (
+                  <div className="w-full">
+                    <AudioPlayer audioUrl={verse.audioUrl} />
+                  </div>
+                )}
+                {verse?.videoUrl && (
+                  <div className="flex justify-center items-center sm:w-1/3 lg:w-1/4 border sm:border-none sm:bg-transparent bg-[#FFFBF2] pb-5 pt-5 sm:p-0">
+                    <VideoPlayer videoUrl={verse.videoUrl} />
+                  </div>
+                )}
+              </div>
 
               {verse?.wordMeanings?.length > 0 && (
-                <WordMeanings 
-                  wordMeanings={verse.wordMeanings} 
-                  displayLanguage={displayLanguage === 'hindi' ? 'hindi' : 'english'} 
+                <WordMeanings
+                  wordMeanings={verse.wordMeanings}
+                  displayLanguage={displayLanguage === 'hindi' ? 'hindi' : 'english'}
                 />
               )}
             </div>
@@ -114,7 +157,7 @@ const StudyPage = () => {
         <div className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${showSidebar ? 'opacity-100 visible' : 'opacity-0 invisible'} md:hidden`} onClick={toggleSidebar}></div>
 
         <SidebarStudy
-          isOpen={showSidebar} 
+          isOpen={showSidebar}
           onClose={toggleSidebar}
           chapterNumber={parseInt(chapterNumber)}
           totalVerses={chapter?.totalVerses || 0}

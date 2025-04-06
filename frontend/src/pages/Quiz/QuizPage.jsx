@@ -1,5 +1,4 @@
 
-
 // import type React from "react"
 import { useState, useEffect } from "react"
 import { getQuizez, submitQuiz, getQuizHistory } from "@/services/api/quiz"
@@ -26,19 +25,8 @@ import { useProgress } from "@/context/ProgressContext"
 import { useStudy } from "@/context/StudyContext"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-
-// Import colors
-const colors = {
-  primaryRed: "#D84040",
-  darkRed: "#A31D1D",
-  lightBeige: "#ECDCBF",
-  paleBeige: "#F8F2DE",
-  deeperRed: "#8A1818",
-  softRed: "#E05F5F",
-  warmBeige: "#E6D0A9",
-  offWhite: "#FFFBF2",
-}
-
+import colors from "@/constants/colors"
+import LoadingIndicator from "@/components/LoadingIndicator"
 const QuizPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -233,17 +221,7 @@ const QuizPage = () => {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen" style={{ backgroundColor: colors.offWhite }}>
-        <div className="text-lg font-medium flex flex-col items-center gap-4">
-          <div
-            className="animate-spin rounded-full h-12 w-12 border-b-2"
-            style={{ borderColor: colors.primaryRed }}
-          ></div>
-          <span style={{ color: colors.deeperRed }}>Loading quizzes...</span>
-        </div>
-      </div>
-    )
+    <LoadingIndicator/>
   }
 
   if (error) {
@@ -256,6 +234,18 @@ const QuizPage = () => {
           </AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
+      </div>  
+    )
+  }
+  if (!quizHistory ||!quizzes) {
+    return (
+      <div className="flex justify-center items-center min-h-screen" style={{ backgroundColor: colors.offWhite }}>
+        <Alert className="max-w-md border-0 shadow-lg" style={{ backgroundColor: colors.paleBeige }}>
+          {/* <AlertCircle className="h-5 w-5" style={{ color: colors.primaryRed }} /> */}
+          <AlertTitle className="font-bold text-center" style={{ color: colors.deeperRed }}>
+            Coming soon
+          </AlertTitle>
+        </Alert>
       </div>
     )
   }
@@ -263,10 +253,10 @@ const QuizPage = () => {
   if (!selectedQuiz) {
     // Quiz List View
     return (
-      <div className="min-h-screen py-10 px-4" style={{backgroundColor:colors.warmBeige}}>
+      <div className="min-h-screen py-10 px-4" style={{ backgroundColor: colors.paleBeige }}>
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 text-center">
-            <h1 className="text-4xl font-bold mb-2" style={{ color: colors.deeperRed }}>
+            <h1 className="text-4xl font-bold mb-2 montserrat" style={{ color: colors.deeperRed }}>
               Knowledge Assessment
             </h1>
             <p className="text-lg max-w-2xl mx-auto" style={{ color: colors.darkRed }}>
@@ -286,7 +276,7 @@ const QuizPage = () => {
           ) : (
             <>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold" style={{ color: colors.darkRed }}>
+                <h2 className="text-2xl font-semibold montserrat" style={{ color: colors.darkRed }}>
                   Available Quizzes
                 </h2>
                 <Badge className="px-3 py-1 text-sm" style={{ backgroundColor: colors.primaryRed, color: "white" }}>
@@ -305,7 +295,7 @@ const QuizPage = () => {
                       key={quiz._id}
                       className="overflow-hidden transition-all duration-300 hover:shadow-xl border-0"
                       style={{
-                        backgroundColor: colors.paleBeige,
+                        backgroundColor: colors.lightBeige,
                         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
                       }}
                     >
@@ -520,17 +510,12 @@ const QuizPage = () => {
                           </div>
                         )}
 
-                        {item.explanation && (
-                          <div
-                            className="mt-3 p-3 rounded text-sm"
-                            style={{ backgroundColor: colors.warmBeige + "40" }}
-                          >
-                            <p className="font-medium mb-1" style={{ color: colors.deeperRed }}>
-                              Explanation:
-                            </p>
-                            <p style={{ color: colors.darkRed }}>{item.explanation}</p>
-                          </div>
-                        )}
+                        <div className="mt-3 p-3 rounded text-sm" style={{ backgroundColor: colors.warmBeige + "40" }}>
+                          <p className="font-medium mb-1" style={{ color: colors.deeperRed }}>
+                            Explanation:
+                          </p>
+                          <p style={{ color: colors.darkRed }}>{item.explanation}</p>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -597,12 +582,10 @@ const QuizPage = () => {
               <Progress
                 value={((currentQuestion + 1) / selectedQuiz.questions.length) * 100}
                 className="h-2"
-                style={
-                  {
-                    backgroundColor: colors.warmBeige,
-                    "--progress-background": colors.primaryRed,
-                  }
-                }
+                style={{
+                  backgroundColor: colors.warmBeige,
+                  "--progress-background": colors.primaryRed,
+                }}
               />
             </div>
           </CardHeader>
