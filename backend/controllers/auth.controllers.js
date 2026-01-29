@@ -7,6 +7,7 @@ import axios from "axios";
 import sendOTP from "../utils/nodeMailer.js";
 import oauth2Client from "../utils/googleClient.js";
 import gravatar from "gravatar"
+import { log } from "console";
 const registeUser = asyncHandler(async(req, res) =>{
     const { name, email, password,gender } = req.body;
     if (!name || !email || !password || !gender) {
@@ -36,11 +37,13 @@ const registeUser = asyncHandler(async(req, res) =>{
     // if (!avatarUrl) { 
     //     throw new ApiError(500, "Error uploading avatar to cloudinary");
     // }
+    console.log(email.trim().toLowerCase());
     const avatarUrl = gravatar.url(email.trim().toLowerCase(), {
-        s: '200',  // Size
-        d: 'mp',   // Default image
-        r: 'pg'    // Rating
-    }, true);
+    s: '200',
+    d: 'identicon',
+    r: 'pg'
+}, true);
+    console.log(avatarUrl);
     const newUser = new User({
         name:name.toLowerCase(),
         email,
@@ -103,7 +106,7 @@ const logInUser = asyncHandler(async (req, res) => {
    const cookieOptions = {
       httpOnly: true,
   secure: true,
-  sameSite: 'none',
+  sameSite: 'strict', // 'strict' or 'lax' based on your requirements
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
 
@@ -128,7 +131,7 @@ const googleAuth = asyncHandler(async (req, res) => {
             `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
         );
     const { email, name, picture } = userRes.data;
-    console.log(picture);
+    // console.log(picture);
     
         let user = await User.findOne({ email });
 

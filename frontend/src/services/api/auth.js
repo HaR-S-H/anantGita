@@ -4,6 +4,7 @@ import {toast} from 'sonner'
 export const registerUser = async (userData, auth, navigate) => {
   try {
     const response = await api.post("/auth/signup", userData);
+    // console.log(response);
     if (response.data.success) {
       navigate(`/verify/${userData.email}`);
     }
@@ -18,6 +19,7 @@ export const loginUser = async (userData, auth, navigate) => {
   const { setIsAuthenticated, setUser, loading } = auth;
   try {
     const response = await api.post("/auth/login", userData);
+    localStorage.setItem("token", response.data.data.token);
     setUser(response.data.data.user);
     setIsAuthenticated(true);
     toast.success(response.data.message);
@@ -36,6 +38,7 @@ export const verifyUser = async (otpData,auth,navigate) => {
   const { setIsAuthenticated, setUser, loading } = auth;
   try {
     const response = await api.post("/auth/verify", otpData);
+    localStorage.setItem("token", response.data.data.token);
     setUser(response.data.data.user);
     setIsAuthenticated(true);
     // toast.success(response.data.message);
@@ -65,7 +68,8 @@ export const resendOtp = async (email) => {
 export const logoutUser = async (auth, navigate) => {
   const { setUser, setIsAuthenticated } = auth;
   try {
-    const response = await api.post("/auth/logout");
+    localStorage.removeItem("token");
+    // const response = await api.post("/auth/logout");
     setUser(null);
     setIsAuthenticated(false);
     toast.success(response.data.message);
@@ -82,6 +86,7 @@ export const loginWithGoogle = async (code, auth, navigate) => {
   const { setIsAuthenticated, setUser, loading } = auth;
   try {
     const response = await api.get(`/auth/google?code=${code}`);
+    localStorage.setItem("token", response.data.data.token);
     setUser(response.data.data.user);
     setIsAuthenticated(true);
     toast.success(response.data.message);
@@ -115,7 +120,8 @@ export const forgetPasswordSendOTP = async (email) => {
 }
 export const forgetPasswordVerifyUser = async (otpData, auth, navigate) => {
   try {
-    const response = await api.post("/auth/forgetpasswordverifyuser", otpData);    
+    const response = await api.post("/auth/forgetpasswordverifyuser", otpData);   
+    localStorage.setItem("token", response.data.data.token);
     // setUser(response.data.data.user);
     toast.success(response.data.message);
     navigate(`/auth/forget-password-reset/${otpData.email}`);
@@ -132,6 +138,7 @@ export const forgetPasswordResetPassword = async (email, password,auth, navigate
   
   try {
     const response = await api.post("/auth/forgetpasswordresetpassword", { email, password });
+    // localStorage.setItem("token", response.data.data.token);
     setUser(response.data.data.user);
     setIsAuthenticated(true);
     navigate("/home");

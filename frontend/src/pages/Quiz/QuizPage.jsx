@@ -50,10 +50,11 @@ const QuizPage = () => {
       try {
         setLoading(true)
         const allChapterIds = progress.chapters
-
+          console.log(allChapterIds);
         // Fetch quizzes data
         const quizResponse = await getQuizez(allChapterIds)
-
+          console.log(quizResponse);
+          
         setQuizzes(quizResponse?.quizzes)
         setChapters(quizResponse?.chapters)
 

@@ -7,7 +7,7 @@ import Chapter from "../models/chapter.models.js";
 import QuizHistory from "../models/quizHistory.models.js";
 const getQuiz = asyncHandler(async (req, res) => {
     let { chapterIds } = req.body; // Expect an array of chapterIds in the request body
-
+    // console.log(chapterIds);
     if (!chapterIds || !Array.isArray(chapterIds) || chapterIds.length === 0) {
         throw new ApiError(400, "chapterIds are required and should be an array");
     }
@@ -31,6 +31,8 @@ const getQuiz = asyncHandler(async (req, res) => {
 
         res.status(200).json(new ApiResponse(200, { quizzes,chapters }, "Quizzes fetched successfully"));
     } catch (error) {
+        console.log(error);
+        
         throw new ApiError(500, "Internal Server Error");
     }
 });

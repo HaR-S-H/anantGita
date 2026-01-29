@@ -54,6 +54,7 @@ const StudyPage = () => {
   }, []);
   
   const verse = chapter?.verses?.[verseNumber - 1];
+  // console.log(chapter);
   
   const navigateToVerse = async (chapterNum, verseNum) => {
     setLocalLoading(true);  // Set loading to true when navigation starts

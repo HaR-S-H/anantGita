@@ -1,7 +1,8 @@
 import api from "./index"; 
 export const getQuizez = async (chapterIds) => {
  try {
-  const response = await api.post("/quiz",{chapterIds});
+   const response = await api.post("/quiz", { chapterIds });
+   console.log(response);
    return response.data.data;
  } catch (error) {
    //  console.log(error);

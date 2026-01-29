@@ -86,56 +86,58 @@ const ChatPage = () => {
     <div className="flex flex-col h-screen p-4" style={{ backgroundColor: colors.paleBeige }}>
       <Card className="flex flex-col h-full" style={{ backgroundColor: colors.offWhite, borderColor: colors.darkRed }}>
         <CardContent className="flex-grow overflow-y-auto p-4 space-y-4" style={{ backgroundColor: colors.lightBeige }}>
-          {messages.map((message, index) => (
-            <div key={index} className={`flex items-start ${message.isUser ? "justify-end" : "justify-start"}`}>
-              {!message.isUser && (
-                <div className="mr-2 mt-2">
-                  <Avatar className="h-8 w-8 border border-red-200">
-                    <AvatarImage src={chatImage} alt="Gita" />
-                    <AvatarFallback style={{ backgroundColor: colors.deeperRed, color: "white" }}>GA</AvatarFallback>
-                  </Avatar>
-                </div>
-              )}
+        {messages.map((message, index) => (
+  <div key={index} className={`flex items-start ${message.isUser ? "justify-end" : "justify-start"}`}>
+    {!message.isUser && (
+      <div className="mr-2 mt-2">
+        <Avatar className="h-8 w-8 border border-red-200">
+          <AvatarImage src={chatImage} alt="Gita" />
+          <AvatarFallback style={{ backgroundColor: colors.deeperRed, color: "white" }}>GA</AvatarFallback>
+        </Avatar>
+      </div>
+    )}
 
-              <div
-                className={`max-w-[70%] p-3 rounded-lg shadow-sm border ${
-                  message.isUser
-                    ? `bg-white text-black border-[${colors.deeperRed}]`
-                    : `bg-white text-black border-[${colors.softRed}]`
-                }`}
-              >
-                {message.isTyping ? (
-                  <div className="flex space-x-1 items-center justify-start">
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:0s]"></span>
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                  </div>
-                ) : (
-                  message.text
-                    .split('\n')
-                    .map(line => line.trim())
-                    .filter(line => line && line !== '*')
-                    .map((line, i) => {
-                      const cleaned = line.replace(/^\*+\s?/, '')
-                      return (
-                        <p key={i} className="mb-1 leading-relaxed">
-                       {message.isUser? cleaned :`•${cleaned}`}
-                        </p>
-                      )
-                    })
-                )}
-              </div>
+    <div
+      className={`max-w-[70%] p-3 rounded-lg shadow-sm border ${
+        message.isUser
+          ? "bg-white text-black border-red-600"
+          : "bg-white text-black border-red-300"
+      }`}
+    >
+      {message.isTyping ? (
+        <div className="flex space-x-1 items-center justify-start">
+          <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:0s]"></span>
+          <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+          <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+        </div>
+      ) : (
+        message.text
+          .split('\n')  // Split by new lines
+          .map(line => line.trim())  // Remove leading/trailing whitespace
+          .filter(line => line && line !== '*')  // Only filter empty lines and single asterisks
+          .map((line, i) => {
+            // Process formatting but keep content with asterisks
+            const cleaned = line.replace(/^\*+\s?/, '')  // Remove only leading asterisks followed by space
+            return (
+              <p key={i} className="mb-1 leading-relaxed">
+                {message.isUser ? cleaned : `• ${cleaned}`}  {/* Add bullet for non-user messages */}
+              </p>
+            )
+          })
+        )
+      }
+    </div>
 
-              {message.isUser && (
-                <div className="ml-2 mt-2">
-                  <Avatar className="h-8 w-8 border border-red-200">
-                    <AvatarImage src={auth.user?.avatar} alt="You" />
-                    <AvatarFallback style={{ backgroundColor: colors.deeperRed, color: "white" }}>ME</AvatarFallback>
-                  </Avatar>
-                </div>
-              )}
-            </div>
-          ))}
+    {message.isUser && (
+      <div className="ml-2 mt-2">
+        <Avatar className="h-8 w-8 border border-red-200">
+          <AvatarImage src={auth.user?.avatar} alt="You" />
+          <AvatarFallback style={{ backgroundColor: colors.deeperRed, color: "white" }}>ME</AvatarFallback>
+        </Avatar>
+      </div>
+    )}
+  </div>
+))}
           <div ref={messagesEndRef} />
         </CardContent>
 

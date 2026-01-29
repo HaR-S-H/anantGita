@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectedDB from "./db/connection.js";
+import "./redis/connection.js";
 import authRoute from "./routes/auth.routes.js"
 import chapterRoute from "./routes/chapter.routes.js"
 import progressRoute from "./routes/progress.routes.js";
